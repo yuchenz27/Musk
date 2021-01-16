@@ -3,6 +3,7 @@
 #include <string>
 #include <stack>
 #include <vector>
+#include <limits>
 
 class Node
 {
@@ -205,6 +206,27 @@ bool binarySearch(TreeNode* root, int val)
 	return binarySearch(root->left, val) || binarySearch(root->right, val);
 }
 
+bool validBinarySearchTreeHelper(TreeNode* root, int left, int right)
+{
+	if (!root)
+	{
+		return true;
+	}
+	if (left < root->val && root->val < right)
+	{
+		return validBinarySearchTreeHelper(root->left, left, root->val) && validBinarySearchTreeHelper(root->right, root->val, right);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool validBinarySearchTree(TreeNode* root)
+{
+	return validBinarySearchTreeHelper(root, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+}
+
 void printVector(std::vector<int> arr)
 {
 	for (int i = 0; i < arr.size(); i++)
@@ -212,6 +234,30 @@ void printVector(std::vector<int> arr)
 		std::cout << arr[i] << " ";
 	}
 	std::cout << std::endl;
+}
+
+bool canSpell(std::vector<char> magazine, std::string note)
+{
+	// create the hash map
+	std::unordered_map<char, int> dict;
+	for (int i = 0; i < magazine.size(); i++)
+	{
+		dict[magazine[i]]++;
+	}
+
+	// check up
+	for (int i = 0; i < note.size(); i++)
+	{
+		if (dict[note[i]] > 0)
+		{
+			dict[note[i]]--;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 int main()
@@ -270,4 +316,27 @@ int main()
 	inOrderTraversal(root2);
 	std::cout << std::endl;
 	std::cout << binarySearch(root2, 13) << std::endl;
+
+	// Valid Binary Search Tree
+	std::cout << std::endl;
+	std::cout << "Valid Binary Search Tree" << std::endl;
+	TreeNode* root3 = new TreeNode(5);
+	root3->left = new TreeNode(4);
+	root3->right = new TreeNode(7);
+	std::cout << validBinarySearchTree(root3) << std::endl;
+	root3->right->left = new TreeNode(2);
+	std::cout << validBinarySearchTree(root3) << std::endl;
+
+	// Ransom Note
+	std::vector<char> magazine;
+	magazine.push_back('a');
+	magazine.push_back('b');
+	magazine.push_back('c');
+	magazine.push_back('d');
+	magazine.push_back('e');
+	magazine.push_back('f');
+	std::string note = "bbed";
+	std::cout << std::endl;
+	std::cout << "Ransom Note" << std::endl;
+	std::cout << canSpell(magazine, note) << std::endl;
 }
